@@ -15,7 +15,7 @@ import com.demo.domain.UserCredentials;
 public class UserAuthDaoImpl implements UserAuthDao {
 
 	private final String USER_CREDENTIALS_INSERT_SQL_QUERY = "INSERT INTO user_credentials(USER_ID,USERNAME,PASSWORD) VALUES(?,?,?)"; 
-	private final String USER_CREDENTIALS_SELECT_SQL = "SELECT UCID,USER_ID,USERNAME,PASSWORD FROM User WHERE USER_ID=?" ;
+	private final String USER_CREDENTIALS_SELECT_SQL = "SELECT UCID,USER_ID,USERNAME,PASSWORD FROM user_credentials WHERE USERNAME = ?" ;
 	
 	@Override
 	public void insertUserCredentials(Connection conn , UserCredentials credentials , long userId ) throws SQLException {
@@ -29,18 +29,20 @@ public class UserAuthDaoImpl implements UserAuthDao {
 	}
 
 	@Override
-	public UserCredentials getUserCredentials(Connection conn) throws SQLException {
+	public UserCredentials getUserCredentials(Connection conn , String userName) throws SQLException {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 	
 		ps = conn.prepareStatement(USER_CREDENTIALS_SELECT_SQL);
+		ps.setString(1,userName);
 		rs = ps.executeQuery();
 		System.out.println("retriveUsers => " + ps.toString());
 		
-		UserCredentials credentials = new UserCredentials();
+		UserCredentials credentials = null ;
 		
 		while (rs.next()) {
+			credentials = new UserCredentials();
 			credentials.setCredentialId(rs.getLong("UCID") );
 			credentials.setUserId(rs.getLong("USER_ID"));
 			credentials.setPassword(rs.getString("PASSWORD"));

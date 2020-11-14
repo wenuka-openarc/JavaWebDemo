@@ -9,14 +9,31 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.demo.domain.UserCredentials;
+import com.demo.service.UserAuthService;
+import com.demo.service.impl.UserAuthServiceImpl;
+import com.demo.service.impl.UserServiceImpl;
 
 
 @WebServlet("/login")
 public class UserLogin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		super.service(request, response);
+	UserAuthService authService ;
+	
+	
+	
+	@Override
+	public void init() throws ServletException {
+		super.init();
+		authService = new UserAuthServiceImpl();
+	}
+
+	public UserAuthService getAuthService() {
+		return authService;
+	}
+
+	public void setAuthService(UserAuthService authService) {
+		this.authService = authService;
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,7 +53,7 @@ public class UserLogin extends HttpServlet {
 			UserCredentials credentials = new UserCredentials(userName, password);
 			
 			
-			if(credentials.getUserName().equals("wenuka") && credentials.getPassword().equals("123") ) {
+			if(authService.userAuthentication(credentials) ) {
 				
 				System.out.println(credentials);
 				

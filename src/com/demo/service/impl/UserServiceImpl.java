@@ -11,6 +11,8 @@ import com.demo.dao.impl.UserAuthDaoImpl;
 import com.demo.dao.impl.UserDaoImpl;
 import com.demo.domain.User;
 import com.demo.domain.UserCredentials;
+import com.demo.exceptions.DemoExceptions;
+import com.demo.exceptions.UserAlreadyExistsException;
 import com.demo.service.UserService;
 
 
@@ -18,6 +20,11 @@ public class UserServiceImpl implements UserService{
 
 	UserDao userDao ;
 	UserAuthDao authDao ;
+	
+	public UserServiceImpl() {
+		this.userDao = new UserDaoImpl();
+		this.authDao = new UserAuthDaoImpl();
+	}
 	
 	public UserAuthDao getAuthDao() {
 		return authDao;
@@ -27,11 +34,6 @@ public class UserServiceImpl implements UserService{
 		this.authDao = authDao;
 	}
 
-	public UserServiceImpl() {
-		this.userDao = new UserDaoImpl();
-		this.authDao = new UserAuthDaoImpl();
-	}
-	
 	public UserDao getUserDao() {
 		return userDao;
 	}
@@ -42,13 +44,22 @@ public class UserServiceImpl implements UserService{
 
 
 	@Override
-	public void insertUser(User user)  {
+	public void insertUser(User user) throws DemoExceptions  {
 		
 		Connection conn = null;
 		try {
 			conn = JDBCConnection.getConnection();
 			if (conn != null) {
 				conn.setAutoCommit(false);
+				
+				UserCredentials existsUser =  getAuthDao().getUserCredentials(conn, user.getUserCredentials().getUserName());
+				
+				if(existsUser != null ) {
+					throw new UserAlreadyExistsException("UserName" + user.getUserCredentials().getUserName() +  " already exists");
+				}
+				
+						
+				
 				getUserDao().insertUser(conn, user);
 				if ( user.getId() > 0 ) {
 					getAuthDao().insertUserCredentials(conn, user.getUserCredentials() , user.getId());
@@ -68,6 +79,7 @@ public class UserServiceImpl implements UserService{
 	
 	}
 
+	
 	@Override
 	public List<User> retriveUsers()  {
 		return null;

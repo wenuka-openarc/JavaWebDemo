@@ -5,6 +5,7 @@ import com.demo.domain.UserCredentials;
 public interface UserAuthService {
 
 	public void insertUserCredentials(UserCredentials credentials); 
-	public UserCredentials getUserCredentials() ;
+	UserCredentials getUserCredentials(UserCredentials userAuth);
+	boolean userAuthentication(UserCredentials userAuth);
 	
 }

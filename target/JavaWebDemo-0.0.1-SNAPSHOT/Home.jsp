@@ -3,11 +3,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<jsp:include page="HTML/Header.jsp"></jsp:include>
 <meta charset="ISO-8859-1">
-<title>Landing page</title>
+<title>Home</title>
 </head>
 <body>
-	<a class="btn btn-primary" href="./login" role="button">Login</a>
+	<h1> Hello ${user_name} </h1> 
 </body>
 </html>
